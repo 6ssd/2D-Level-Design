@@ -20,15 +20,19 @@ namespace Platformer.Mechanics
         internal Collider2D _collider;
         internal AudioSource _audio;
         SpriteRenderer spriteRenderer;
+        internal Vector3 respawnPos;
+        internal float velocity;
 
         public Bounds Bounds => _collider.bounds;
 
         void Awake()
         {
             control = GetComponent<AnimationController>();
+            velocity = -0.1f;
             _collider = GetComponent<Collider2D>();
             _audio = GetComponent<AudioSource>();
             spriteRenderer = GetComponent<SpriteRenderer>();
+            respawnPos = control.transform.position;
         }
 
         void OnCollisionEnter2D(Collision2D collision)
@@ -49,7 +53,15 @@ namespace Platformer.Mechanics
                 if (mover == null) mover = path.CreateMover(control.maxSpeed * 0.5f);
                 control.move.x = Mathf.Clamp(mover.Position.x - transform.position.x, -1, 1);
             }
-        }
+            else
+            {
+                control.move.x = velocity;
+            }
 
+            if (control.velocity.x == 0)
+            {
+                velocity = -control.move.x;
+            }
+        }
     }
 }
